@@ -7,3 +7,6 @@ The utility compares two configuration files and shows the difference.
 ##  Setup
 
 ## Examples
+
+Comparision of two flat .jsons:
+[![asciicast](https://asciinema.org/a/0pBzrDwMyCWkOhUV4KHboxTYn.svg)](https://asciinema.org/a/0pBzrDwMyCWkOhUV4KHboxTYn)
