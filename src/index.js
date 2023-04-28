@@ -17,58 +17,35 @@ const jsonDiff = (filepath1, filepath2) => {
   if (existsSync(fullPath1) && existsSync(fullPath2)) {
     const jsonFile1 = JSON.parse(readFileSync(fullPath1, 'utf8'));
     const jsonFile2 = JSON.parse(readFileSync(fullPath2, 'utf8'));
-    const keysFile1 = Object.keys(jsonFile1);
-    const keysFile2 = Object.keys(jsonFile2);
+    const sortedKeys = _.sortBy(_.union(Object.keys(jsonFile1), Object.keys(jsonFile2)));
     const firstFilePrefix = '  - ';
     const secondFilePrefix = '  + ';
     const bothFilesPrefix = '    ';
+    const valueDelimiter = ': ';
 
-    const diffArr = keysFile1.reduce((acc, key) => {
-      if (keysFile2.includes(key)) {
-        if (jsonFile1[key] === jsonFile2[key]) {
-          acc.push([bothFilesPrefix, key, jsonFile1[key]]);
-        } else {
-          acc.push([firstFilePrefix, key, jsonFile1[key]]);
-          acc.push([secondFilePrefix, key, jsonFile2[key]]);
-        }
-      } else acc.push([firstFilePrefix, key, jsonFile1[key]]);
-      return acc;
-    }, []);
-
-    const fullDiffArr = keysFile2.reduce(
+    const diffArray = sortedKeys.reduce(
       (acc, key) => {
-        if (!keysFile1.includes(key)) acc.push([secondFilePrefix, key, jsonFile2[key]]);
+        if (Object.hasOwn(jsonFile1, key)) {
+          if (Object.hasOwn(jsonFile2, key)) {
+            if (jsonFile1[key] === jsonFile2[key]) {
+              acc.push(bothFilesPrefix, key, valueDelimiter, jsonFile1[key], '\n');
+            } else {
+              acc.push(firstFilePrefix, key, valueDelimiter, jsonFile1[key], '\n');
+              acc.push(secondFilePrefix, key, valueDelimiter, jsonFile2[key], '\n');
+            }
+          } else acc.push(firstFilePrefix, key, valueDelimiter, jsonFile1[key], '\n');
+        } else acc.push(secondFilePrefix, key, valueDelimiter, jsonFile2[key], '\n');
         return acc;
       },
-      [...diffArr],
+      ['{\n'],
     );
-
-    const sortedDiffArr = _.sortBy(
-      _.sortBy(fullDiffArr, ([prefix]) => prefix !== '  - '),
-      ([, key]) => key,
-    );
-
-    const result = sortedDiffArr
-      .reduce(
-        (acc, [prefix, key, value]) => {
-          acc.push(`${prefix}${key}: ${value}`);
-          acc.push('\n');
-          return acc;
-        },
-        ['{\n'],
-      )
-      .join('');
-    return `${result}}`;
+    return `${diffArray.join('')}}`;
   }
   return 'Incorrect data';
 };
 
 const genDiff = (filepath1, filepath2, format) => {
-  if (!format) {
-    if (getFormat(filepath1, filepath2) === '.json') {
-      return jsonDiff(filepath1, filepath2);
-    }
-  }
+  if (!format && getFormat(filepath1, filepath2) === '.json') return jsonDiff(filepath1, filepath2);
   return undefined;
 };
 
