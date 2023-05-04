@@ -37,8 +37,7 @@ const jsonDiff = (filepath1, filepath2) => {
     acc.push(genDiffString(json1, json2, key));
     return acc;
   }, []);
-  return `{
-${diffArray.join('')}}`;
+  return `{\u{000A}${diffArray.join('')}}`;
 };
 
 const genDiff = (filepath1, filepath2, format) => {
