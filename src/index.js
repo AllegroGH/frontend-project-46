@@ -18,11 +18,14 @@ const genDiffString = (key, value, withFile = 0) => {
 
   switch (withFile) {
     case 0:
-      return `${bothFilesPrefix}${key}${valueDelimiter}${value}`;
+      return `${bothFilesPrefix}${key}${valueDelimiter}${value}
+`;
     case 1:
-      return `${firstFilePrefix}${key}${valueDelimiter}${value}`;
+      return `${firstFilePrefix}${key}${valueDelimiter}${value}
+`;
     case 2:
-      return `${secondFilePrefix}${key}${valueDelimiter}${value}`;
+      return `${secondFilePrefix}${key}${valueDelimiter}${value}
+`;
     default:
       return '';
   }
@@ -40,11 +43,11 @@ const jsonDiff = (filepath1, filepath2) => {
 
   const diffArray = sortedKeys.reduce((acc, key) => {
     if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) {
-      acc.push(genDiffString(key, json1[key]), '\n');
+      acc.push(genDiffString(key, json1[key]));
       return acc;
     }
-    if (Object.hasOwn(json1, key)) acc.push(genDiffString(key, json1[key], 1), '\n');
-    if (Object.hasOwn(json2, key)) acc.push(genDiffString(key, json2[key], 2), '\n');
+    if (Object.hasOwn(json1, key)) acc.push(genDiffString(key, json1[key], 1));
+    if (Object.hasOwn(json2, key)) acc.push(genDiffString(key, json2[key], 2));
     return acc;
   }, []);
   return `{
