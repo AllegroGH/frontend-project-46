@@ -10,19 +10,19 @@ const getFormat = (filepath1, filepath2) => {
   return 'incorrect';
 };
 
-const genDiffString = (key, value, withFile = 'bothFiles') => {
+const genDiffString = (key, value, withFile = 0) => {
   const firstFilePrefix = '  - ';
   const secondFilePrefix = '  + ';
   const bothFilesPrefix = '    ';
   const valueDelimiter = ': ';
 
   switch (withFile) {
-    case 'firstFile':
-      return `${firstFilePrefix}${key}${valueDelimiter}${value}`;
-    case 'secondFile':
-      return `${secondFilePrefix}${key}${valueDelimiter}${value}`;
-    case 'bothFiles':
+    case 0:
       return `${bothFilesPrefix}${key}${valueDelimiter}${value}`;
+    case 1:
+      return `${firstFilePrefix}${key}${valueDelimiter}${value}`;
+    case 2:
+      return `${secondFilePrefix}${key}${valueDelimiter}${value}`;
     default:
       return '';
   }
@@ -32,24 +32,20 @@ const jsonDiff = (filepath1, filepath2) => {
   const fullPath1 = pathResolve(cwd(), filepath1);
   const fullPath2 = pathResolve(cwd(), filepath2);
 
-  if (!existsSync(fullPath1) && !existsSync(fullPath2)) return 'Incorrect data';
+  if (!(existsSync(fullPath1) && existsSync(fullPath2))) return 'Incorrect data';
 
-  const jsonFile1 = JSON.parse(readFileSync(fullPath1, 'utf8'));
-  const jsonFile2 = JSON.parse(readFileSync(fullPath2, 'utf8'));
-  const sortedKeys = _.sortBy(_.union(Object.keys(jsonFile1), Object.keys(jsonFile2)));
+  const json1 = JSON.parse(readFileSync(fullPath1, 'utf8'));
+  const json2 = JSON.parse(readFileSync(fullPath2, 'utf8'));
+  const sortedKeys = _.sortBy(_.union(Object.keys(json1), Object.keys(json2)));
 
   const diffArray = sortedKeys.reduce(
     (acc, key) => {
-      if (Object.hasOwn(jsonFile1, key)) {
-        if (Object.hasOwn(jsonFile2, key)) {
-          if (jsonFile1[key] === jsonFile2[key]) {
-            acc.push(genDiffString(key, jsonFile1[key], 'bothFiles'), '\n');
-          } else {
-            acc.push(genDiffString(key, jsonFile1[key], 'firstFile'), '\n');
-            acc.push(genDiffString(key, jsonFile2[key], 'secondFile'), '\n');
-          }
-        } else acc.push(genDiffString(key, jsonFile1[key], 'firstFile'), '\n');
-      } else acc.push(genDiffString(key, jsonFile2[key], 'secondFile'), '\n');
+      if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) {
+        acc.push(genDiffString(key, json1[key]), '\n');
+        return acc;
+      }
+      if (Object.hasOwn(json1, key)) acc.push(genDiffString(key, json1[key], 1), '\n');
+      if (Object.hasOwn(json2, key)) acc.push(genDiffString(key, json2[key], 2), '\n');
       return acc;
     },
     ['{\n'],
