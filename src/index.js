@@ -38,19 +38,17 @@ const jsonDiff = (filepath1, filepath2) => {
   const json2 = JSON.parse(readFileSync(fullPath2, 'utf8'));
   const sortedKeys = _.sortBy(_.union(Object.keys(json1), Object.keys(json2)));
 
-  const diffArray = sortedKeys.reduce(
-    (acc, key) => {
-      if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) {
-        acc.push(genDiffString(key, json1[key]), '\n');
-        return acc;
-      }
-      if (Object.hasOwn(json1, key)) acc.push(genDiffString(key, json1[key], 1), '\n');
-      if (Object.hasOwn(json2, key)) acc.push(genDiffString(key, json2[key], 2), '\n');
+  const diffArray = sortedKeys.reduce((acc, key) => {
+    if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) {
+      acc.push(genDiffString(key, json1[key]), '\n');
       return acc;
-    },
-    ['{\n'],
-  );
-  return `${diffArray.join('')}}`;
+    }
+    if (Object.hasOwn(json1, key)) acc.push(genDiffString(key, json1[key], 1), '\n');
+    if (Object.hasOwn(json2, key)) acc.push(genDiffString(key, json2[key], 2), '\n');
+    return acc;
+  }, []);
+  return `{
+${diffArray.join('')}}`;
 };
 
 const genDiff = (filepath1, filepath2, format) => {
