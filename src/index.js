@@ -10,25 +10,17 @@ const getFormat = (filepath1, filepath2) => {
   return 'incorrect';
 };
 
-const genDiffString = (key, value, withFile = 0) => {
+const genDiffString = (json1, json2, key) => {
   const firstFilePrefix = '  - ';
   const secondFilePrefix = '  + ';
   const bothFilesPrefix = '    ';
   const valueDelimiter = ': ';
 
-  switch (withFile) {
-    case 0:
-      return `${bothFilesPrefix}${key}${valueDelimiter}${value}
-`;
-    case 1:
-      return `${firstFilePrefix}${key}${valueDelimiter}${value}
-`;
-    case 2:
-      return `${secondFilePrefix}${key}${valueDelimiter}${value}
-`;
-    default:
-      return '';
-  }
+  if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) return `${bothFilesPrefix}${key}${valueDelimiter}${json1[key]}\u{000A}`;
+  let result = '';
+  if (Object.hasOwn(json1, key)) result = `${firstFilePrefix}${key}${valueDelimiter}${json1[key]}\u{000A}`;
+  if (Object.hasOwn(json2, key)) result = `${result}${secondFilePrefix}${key}${valueDelimiter}${json2[key]}\u{000A}`;
+  return result;
 };
 
 const jsonDiff = (filepath1, filepath2) => {
@@ -42,12 +34,7 @@ const jsonDiff = (filepath1, filepath2) => {
   const sortedKeys = _.sortBy(_.union(Object.keys(json1), Object.keys(json2)));
 
   const diffArray = sortedKeys.reduce((acc, key) => {
-    if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) {
-      acc.push(genDiffString(key, json1[key]));
-      return acc;
-    }
-    if (Object.hasOwn(json1, key)) acc.push(genDiffString(key, json1[key], 1));
-    if (Object.hasOwn(json2, key)) acc.push(genDiffString(key, json2[key], 2));
+    acc.push(genDiffString(json1, json2, key));
     return acc;
   }, []);
   return `{
