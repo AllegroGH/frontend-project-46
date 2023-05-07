@@ -13,19 +13,17 @@ const getFormat = (filepath1, filepath2) => {
   return 'incorrect extensions';
 };
 
-const parseFiles = (filepath1, filepath2, format) => {
-  const filesFormat = getFormat(filepath1, filepath2);
-  if (!format && filesFormat === 'JSON') {
-    const jsonData1 = JSON.parse(readFileSync(filepath1, 'utf8'));
-    const jsonData2 = JSON.parse(readFileSync(filepath2, 'utf8'));
-    return [jsonData1, jsonData2];
-  }
-  if (!format && filesFormat === 'YAML') {
-    const yamlData1 = yaml.load(readFileSync(filepath1, 'utf8'));
-    const yamlData2 = yaml.load(readFileSync(filepath2, 'utf8'));
-    return [yamlData1, yamlData2];
-  }
+const parse = (filepath, format) => {
+  if (format === 'JSON') return JSON.parse(readFileSync(filepath, 'utf8'));
+  if (format === 'YAML') return yaml.load(readFileSync(filepath, 'utf8'));
   return undefined;
+};
+
+const parseFiles = (filepath1, filepath2, format) => {
+  const filesFormat = format || getFormat(filepath1, filepath2);
+  const data1 = parse(filepath1, filesFormat);
+  const data2 = parse(filepath2, filesFormat);
+  return [data1, data2];
 };
 
 export default parseFiles;
