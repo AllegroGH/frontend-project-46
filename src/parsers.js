@@ -16,14 +16,14 @@ const getFormat = (filepath1, filepath2) => {
 const parseFiles = (filepath1, filepath2, format) => {
   const filesFormat = getFormat(filepath1, filepath2);
   if (!format && filesFormat === 'JSON') {
-    const data1 = JSON.parse(readFileSync(filepath1, 'utf8'));
-    const data2 = JSON.parse(readFileSync(filepath2, 'utf8'));
-    return [data1, data2];
+    const jsonData1 = JSON.parse(readFileSync(filepath1, 'utf8'));
+    const jsonData2 = JSON.parse(readFileSync(filepath2, 'utf8'));
+    return [jsonData1, jsonData2];
   }
   if (!format && filesFormat === 'YAML') {
-    const data1 = yaml.load(readFileSync(filepath1, 'utf8'));
-    const data2 = yaml.load(readFileSync(filepath2, 'utf8'));
-    return [data1, data2];
+    const yamlData1 = yaml.load(readFileSync(filepath1, 'utf8'));
+    const yamlData2 = yaml.load(readFileSync(filepath2, 'utf8'));
+    return [yamlData1, yamlData2];
   }
   return undefined;
 };
