@@ -2,6 +2,7 @@
 [![Actions Status](https://github.com/AllegroGH/frontend-project-46/workflows/hexlet-check/badge.svg)](https://github.com/AllegroGH/frontend-project-46/actions)
 [![Actions Status](https://github.com/AllegroGH/frontend-project-46/workflows/build/badge.svg)](https://github.com/AllegroGH/frontend-project-46/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f5a8f134c8c1fd30a9a0/maintainability)](https://codeclimate.com/github/AllegroGH/frontend-project-46/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f5a8f134c8c1fd30a9a0/test_coverage)](https://codeclimate.com/github/AllegroGH/frontend-project-46/test_coverage)
 
 ## Description
 The utility compares two configuration files and shows the difference.
