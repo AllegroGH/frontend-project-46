@@ -8,7 +8,7 @@ lint: # запуск линтера
 	npx eslint .
 
 test: # запуск тестов
-	NODE_OPTIONS=--experimental-vm-modules npx jest 
+	npm test
 
-test-cover: # запуск тестов с измерением покрытия
-        NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
+test-coverage: # запуск тестов с измерением покрытия
+	npm test --  --coverage

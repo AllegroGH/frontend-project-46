@@ -40,7 +40,7 @@ const jsonDiff = (filepath1, filepath2) => {
   return `{\u{000A}${diffArray.join('')}}`;
 };
 
-const genDiff = (filepath1, filepath2, format) => {
+const genDiff = (filepath1, filepath2, format = undefined) => {
   if (!format && getFormat(filepath1, filepath2) === '.json') return jsonDiff(filepath1, filepath2);
   return undefined;
 };
