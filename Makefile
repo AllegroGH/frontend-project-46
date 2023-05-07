@@ -10,5 +10,8 @@ lint: # запуск линтера
 test: # запуск тестов
 	npm test
 
+test-watch: # запуск тестов с выборочным наблюдением
+	npm test -- --watch
+
 test-coverage: # запуск тестов с измерением покрытия
 	npm test --  --coverage
