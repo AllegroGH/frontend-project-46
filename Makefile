@@ -9,3 +9,6 @@ lint: # запуск линтера
 
 test: # запуск тестов
 	NODE_OPTIONS=--experimental-vm-modules npx jest 
+
+test-cover: # запуск тестов с измерением покрытия
+        NODE_OPTIONS=--experimental-vm-modules npx jest --coverage
