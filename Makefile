@@ -6,3 +6,6 @@ publish: # отладка публикации
 
 lint: # запуск линтера
 	npx eslint .
+
+test: # запуск тестов
+	NODE_OPTIONS=--experimental-vm-modules npx jest 
