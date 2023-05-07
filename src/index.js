@@ -2,7 +2,7 @@ import { cwd } from 'node:process';
 import { resolve as pathResolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import _ from 'lodash';
-import parseFiles from './parsers';
+import parseFiles from './parsers.js';
 
 const genDiffString = (json1, json2, key) => {
   const firstFilePrefix = '  - ';
