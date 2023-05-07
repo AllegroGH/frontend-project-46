@@ -13,3 +13,6 @@ The utility compares two configuration files and shows the difference.
 
 Comparision of two flat .jsons:
 [![asciicast](https://asciinema.org/a/0pBzrDwMyCWkOhUV4KHboxTYn.svg)](https://asciinema.org/a/0pBzrDwMyCWkOhUV4KHboxTYn)
+
+Comparision of two flat .jsons/.yml:
+[![asciicast](https://asciinema.org/a/69tcitdVbFgVYXeCY075oww7L.svg)](https://asciinema.org/a/69tcitdVbFgVYXeCY075oww7L)
