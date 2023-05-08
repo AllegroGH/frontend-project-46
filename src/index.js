@@ -128,7 +128,7 @@ const formater = (array) => {
         return acc;
       }
       // acc.push(`${curIndent}${curPrefix}${key}: {\u{000A}${iter(value)}{\u{000A}${curBracketIndent}}`);
-      acc.push(`${curIndent}${curPrefix}${key}: ${iter(value)}`); // add foo!!!!
+      acc.push(`${curIndent}${curPrefix}${key}: ${iter(value)}`); // add foo!!!!!
       return acc;
     }, []);
     return result.join('\n');
