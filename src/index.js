@@ -17,13 +17,15 @@ const genDiffString = (json1, json2, key) => {
   return result;
 };
 
-const genDiff = (filepath1, filepath2, format = undefined) => {
+const gendiff = (filepath1, filepath2, format = 'stylish') => {
+  if (format !== 'stylish') return 'NEED FORMATER!';
+
   const fullPath1 = pathResolve(cwd(), filepath1);
   const fullPath2 = pathResolve(cwd(), filepath2);
 
   if (!(existsSync(fullPath1) && existsSync(fullPath2))) return 'incorrect data';
 
-  const [data1, data2] = parseFiles(fullPath1, fullPath2, format);
+  const [data1, data2] = parseFiles(fullPath1, fullPath2);
   const sortedKeys = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)));
 
   const diffArray = sortedKeys.reduce((acc, key) => {
@@ -33,4 +35,4 @@ const genDiff = (filepath1, filepath2, format = undefined) => {
   return `{\u{000A}${diffArray.join('')}}`;
 };
 
-export default genDiff;
+export default gendiff;
