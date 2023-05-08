@@ -4,17 +4,62 @@ import { existsSync } from 'node:fs';
 import _ from 'lodash';
 import parseFiles from './parsers.js';
 
-const genDiffString = (json1, json2, key) => {
-  const firstFilePrefix = '  - ';
-  const secondFilePrefix = '  + ';
-  const bothFilesPrefix = '    ';
+const genDiffString = (json1, json2, key, depth) => {
+  const iter = (currentValue, iterDepth) => {
+    const currentIndent = '    '.repeat(iterDepth);
+    if (!_.isObject(currentValue)) return currentValue;
+    const sortedKeys = _.sortBy(Object.keys(currentValue));
+    const diffArray = sortedKeys.reduce((acc, keyA) => {
+      if (_.isObject(currentValue[keyA])) {
+        acc.push(`${currentIndent}${keyA}: ${iter(currentValue[keyA], iterDepth + 1)}`);
+      } else {
+        acc.push(`${currentIndent}${keyA}: ${currentValue[keyA]}`);
+      }
+      return acc;
+    }, []);
+    const newIndent = '    '.repeat(iterDepth - 1);
+    return `{\u{000A}${diffArray.join('\n')}\u{000A}${newIndent}}`;
+  };
+
+  const firstFilePrefix = `${'    '.repeat(depth - 1)}  - `;
+  const secondFilePrefix = `${'    '.repeat(depth - 1)}  + `;
+  const bothFilesPrefix = `${'    '.repeat(depth - 1)}    `;
   const valueDelimiter = ': ';
 
-  if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) return `${bothFilesPrefix}${key}${valueDelimiter}${json1[key]}\u{000A}`;
-  let result = '';
-  if (Object.hasOwn(json1, key)) result = `${firstFilePrefix}${key}${valueDelimiter}${json1[key]}\u{000A}`;
-  if (Object.hasOwn(json2, key)) result = `${result}${secondFilePrefix}${key}${valueDelimiter}${json2[key]}\u{000A}`;
-  return result;
+  if (Object.hasOwn(json1, key) && Object.hasOwn(json2, key) && json1[key] === json2[key]) return `${bothFilesPrefix}${key}${valueDelimiter}${json1[key]}`;
+  const result = [];
+  if (Object.hasOwn(json1, key)) {
+    if (_.isObject(json1[key])) {
+      result.push(`${firstFilePrefix}${key}${valueDelimiter}${iter(json1[key], depth + 1)}`);
+    } else result.push(`${firstFilePrefix}${key}${valueDelimiter}${json1[key]}`);
+  }
+  if (Object.hasOwn(json2, key)) {
+    if (_.isObject(json2[key])) {
+      result.push(`${secondFilePrefix}${key}${valueDelimiter}${iter(json2[key], depth + 1)}`);
+    } else result.push(`${secondFilePrefix}${key}${valueDelimiter}${json2[key]}`);
+  }
+
+  return result.join('\n');
+};
+
+const makeDiff = (data1, data2) => {
+  const iter = (currentData1, currentData2, depth) => {
+    const sortedKeys = _.sortBy(_.union(Object.keys(currentData1), Object.keys(currentData2)));
+
+    const diffArray = sortedKeys.reduce((acc, key) => {
+      if (_.isObject(currentData1[key]) && _.isObject(currentData2[key])) {
+        const currentIndent = '    '.repeat(depth);
+        acc.push(`${currentIndent}${key}: ${iter(currentData1[key], currentData2[key], depth + 1)}`);
+      } else {
+        acc.push(genDiffString(currentData1, currentData2, key, depth));
+      }
+      return acc;
+    }, []);
+    const curIndent = '    '.repeat(depth - 1);
+    return `{\u{000A}${diffArray.join('\n')}\u{000A}${curIndent}}`;
+  };
+
+  return iter(data1, data2, 1);
 };
 
 const gendiff = (filepath1, filepath2, format = 'stylish') => {
@@ -26,13 +71,7 @@ const gendiff = (filepath1, filepath2, format = 'stylish') => {
   if (!(existsSync(fullPath1) && existsSync(fullPath2))) return 'incorrect data';
 
   const [data1, data2] = parseFiles(fullPath1, fullPath2);
-  const sortedKeys = _.sortBy(_.union(Object.keys(data1), Object.keys(data2)));
-
-  const diffArray = sortedKeys.reduce((acc, key) => {
-    acc.push(genDiffString(data1, data2, key));
-    return acc;
-  }, []);
-  return `{\u{000A}${diffArray.join('')}}`;
+  return makeDiff(data1, data2);
 };
 
 export default gendiff;

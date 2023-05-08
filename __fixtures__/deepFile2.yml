@@ -5,12 +5,11 @@ common:
   setting4: "blah blah"
   setting5:
     key5: "value5"
-
-setting6:
-  key: "value"
-  ops: "vops"
-  doge:
-    wow: "so much"
+  setting6:
+    key: "value"
+    ops: "vops"
+    doge:
+      wow: "so much"
 
 group1:
   foo: "bar"
