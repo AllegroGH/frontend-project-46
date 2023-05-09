@@ -31,18 +31,14 @@ const getPropertiesList = (array) => {
   return propertiesList;
 };
 
-const getFilteredPropertiesList = (propertiesList) => {
-  const result = propertiesList
-    .map(([property, value, symbol], index, arr) => {
-      const nextProperty = arr[index + 1] ? arr[index + 1][0] : undefined;
-      const prevProperty = arr[index - 1] ? arr[index - 1][0] : undefined;
-      if (property === nextProperty) return [property, [value, arr[index + 1][1]], 'updated'];
-      if (property === prevProperty) return [property, value, ' '];
-      return [property, value, symbol];
-    })
-    .filter(([, , symbol]) => symbol !== ' ');
-  return result;
-};
+// prettier-ignore
+const getFilteredPropertiesList = (propertiesList) => propertiesList
+  .map(([property, value, symbol], index, arr) => {
+    if (arr[index + 1] && property === arr[index + 1][0]) return [property, [value, arr[index + 1][1]], 'updated'];
+    if (arr[index - 1] && property === arr[index - 1][0]) return [property, value, ' '];
+    return [property, value, symbol];
+  })
+  .filter(([, , symbol]) => symbol !== ' ');
 
 const plainFormatter = (array) => {
   const propertiesList = getPropertiesList(array);
