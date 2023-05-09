@@ -74,9 +74,10 @@ const gendiff = (filepath1, filepath2, format = 'stylish') => {
   const fullPath1 = pathResolve(cwd(), filepath1);
   const fullPath2 = pathResolve(cwd(), filepath2);
 
-  if (!(existsSync(fullPath1) && existsSync(fullPath2))) return 'incorrect data';
+  if (!(existsSync(fullPath1) && existsSync(fullPath2))) return 'invalid filenames';
 
   const [data1, data2] = parseFiles(fullPath1, fullPath2);
+  if (!data1 || !data2) return 'wrong data';
   const diffStructure = makeDiff(data1, data2);
   return stylishFormater(diffStructure);
 };

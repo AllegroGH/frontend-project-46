@@ -9,13 +9,13 @@ const getDataType = (filepath) => {
 
   if (jsonExtnames.includes(extName)) return 'JSON';
   if (yamlExtnames.includes(extName)) return 'YAML';
-  return 'incorrect extension';
+  return undefined;
 };
 
 const parse = (filepath, dataType) => {
   if (dataType === 'JSON') return JSON.parse(readFileSync(filepath, 'utf8'));
   if (dataType === 'YAML') return yaml.load(readFileSync(filepath, 'utf8'));
-  return undefined;
+  return dataType;
 };
 
 const parseFiles = (filepath1, filepath2) => {

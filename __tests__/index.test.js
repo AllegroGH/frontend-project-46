@@ -36,3 +36,8 @@ test('gendiff deep JSON files', () => {
 test('gendiff deep YAML files', () => {
   expect(genDiff(deepYamlPath1, deepYamlPath2)).toEqual(deepExpectedString);
 });
+
+test('FS errors', () => {
+  expect(genDiff('1.json', '2.yaml')).toEqual('invalid filenames');
+  expect(genDiff(getFixturePath('1'), getFixturePath('1'))).toEqual('wrong data');
+});
