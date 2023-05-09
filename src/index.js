@@ -37,27 +37,26 @@ const makeDiff = (data1, data2) => {
   return iter(data1, data2, 1);
 };
 
-const formater = (array) => {
+const getStylishValue = (value, depth, spacesCount) => {
+  if (!_.isObject(value)) return value;
+  const curIndent = ' '.repeat(depth * spacesCount);
+  const bracketIndent = ' '.repeat((depth - 1) * spacesCount);
+  const lines = Object.entries(value).map(([key, val]) => {
+    if (!_.isObject(val)) return `${curIndent}${key}: ${val}`;
+    return `${curIndent}${key}: ${getStylishValue(val, depth + 1, spacesCount)}`;
+  });
+  return ['{', ...lines, `${bracketIndent}}`].join('\n');
+};
+
+const stylishFormater = (array) => {
   const spacesCount = 4;
-
-  const addValueIter = (value, depth) => {
-    if (!_.isObject(value)) return value;
-    const curIndent = ' '.repeat(depth * spacesCount);
-    const bracketIndent = ' '.repeat((depth - 1) * spacesCount);
-    const lines = Object.entries(value).map(([key, val]) => {
-      if (!_.isObject(val)) return `${curIndent}${key}: ${val}`;
-      return `${curIndent}${key}: ${addValueIter(val, depth + 1)}`;
-    });
-    return ['{', ...lines, `${bracketIndent}}`].join('\n');
-  };
-
   const mainIter = (curArray) => {
     const result = curArray.reduce((acc, [depth, symbol, key, value]) => {
       const curPrefix = `${symbol} `;
       const curIndent = ' '.repeat(depth * spacesCount - 2);
       const curBracketIndent = ' '.repeat(depth * spacesCount);
       if (!_.isArray(value)) {
-        acc.push(`${curIndent}${curPrefix}${key}: ${addValueIter(value, depth + 1)}`);
+        acc.push(`${curIndent}${curPrefix}${key}: ${getStylishValue(value, depth + 1, spacesCount)}`);
         return acc;
       }
       acc.push([`${curIndent}${curPrefix}${key}: {`, mainIter(value), `${curBracketIndent}}`].join('\n'));
@@ -79,7 +78,7 @@ const gendiff = (filepath1, filepath2, format = 'stylish') => {
 
   const [data1, data2] = parseFiles(fullPath1, fullPath2);
   const diffStructure = makeDiff(data1, data2);
-  return formater(diffStructure);
+  return stylishFormater(diffStructure);
 };
 
 export default gendiff;
