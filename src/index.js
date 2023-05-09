@@ -6,17 +6,21 @@ import parseFiles from './parsers.js';
 
 const getSortedKeysUnion = (obj1, obj2) => _.sortBy(_.union(Object.keys(obj1), Object.keys(obj2)));
 
-const getKeyPresence = (obj1, obj2, key) => {
-  if (Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key) && obj1[key] === obj2[key]) return 'both =';
-  if (Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key) && obj1[key] !== obj2[key]) return 'both !=';
-  if (Object.hasOwn(obj1, key)) return 'only first';
-  if (Object.hasOwn(obj2, key)) return 'only second';
-  return undefined;
+const getDiffElems = (obj1, obj2, key, depth) => {
+  const firstFileSymbol = '-';
+  const secondFileSymbol = '+';
+  const bothFilesSymbol = ' ';
+
+  if (Object.hasOwn(obj1, key) && Object.hasOwn(obj2, key) && obj1[key] === obj2[key]) {
+    return [[depth, bothFilesSymbol, key, obj1[key]]];
+  }
+  const altResult = [];
+  if (Object.hasOwn(obj1, key)) altResult.push([depth, firstFileSymbol, key, obj1[key]]);
+  if (Object.hasOwn(obj2, key)) altResult.push([depth, secondFileSymbol, key, obj2[key]]);
+  return altResult;
 };
 
 const makeDiff = (data1, data2) => {
-  const entryFirstData = '-';
-  const entrySecondData = '+';
   const entryBothData = ' ';
   const iter = (iterData1, iterData2, depth) => {
     const sortedKeys = getSortedKeysUnion(iterData1, iterData2);
@@ -25,14 +29,7 @@ const makeDiff = (data1, data2) => {
         acc.push([depth, entryBothData, key, [...iter(iterData1[key], iterData2[key], depth + 1)]]);
         return acc;
       }
-      const keyPresenceInfo = getKeyPresence(iterData1, iterData2, key);
-      if (keyPresenceInfo === 'both =') acc.push([depth, entryBothData, key, iterData1[key]]);
-      if (keyPresenceInfo === 'both !=') {
-        acc.push([depth, entryFirstData, key, iterData1[key]]);
-        acc.push([depth, entrySecondData, key, iterData2[key]]);
-      }
-      if (keyPresenceInfo === 'only first') acc.push([depth, entryFirstData, key, iterData1[key]]);
-      if (keyPresenceInfo === 'only second') acc.push([depth, entrySecondData, key, iterData2[key]]);
+      acc.push(...getDiffElems(iterData1, iterData2, key, depth));
       return acc;
     }, []);
     return diffArray;
