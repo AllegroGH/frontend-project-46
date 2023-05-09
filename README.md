@@ -19,3 +19,6 @@ Comparision of two flat .jsons/.yml:
 
 Comparision of two deep .jsons/.yml:
 [![asciicast](https://asciinema.org/a/WOLeU2YfLKHmMIaflNOKnQmfI.svg)](https://asciinema.org/a/WOLeU2YfLKHmMIaflNOKnQmfI)
+
+Plain comparision of two deep .jsons/.yml:
+[![asciicast](https://asciinema.org/a/VnNuqfZEyaVJdlXOfO9YgQt3X.svg)](https://asciinema.org/a/VnNuqfZEyaVJdlXOfO9YgQt3X)
