@@ -34,8 +34,10 @@ const getPropertiesList = (array) => {
 const getFilteredPropertiesList = (propertiesList) => {
   const result = propertiesList
     .map(([property, value, symbol], index, arr) => {
-      if (arr[index + 1] && property === arr[index + 1][0]) return [property, [value, arr[index + 1][1]], 'updated'];
-      if (arr[index - 1] && property === arr[index - 1][0]) return [property, value, ' '];
+      const nextProperty = arr[index + 1] ? arr[index + 1][0] : undefined;
+      const prevProperty = arr[index - 1] ? arr[index - 1][0] : undefined;
+      if (property === nextProperty) return [property, [value, arr[index + 1][1]], 'updated'];
+      if (property === prevProperty) return [property, value, ' '];
       return [property, value, symbol];
     })
     .filter(([, , symbol]) => symbol !== ' ');
