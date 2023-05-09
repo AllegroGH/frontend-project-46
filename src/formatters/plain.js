@@ -31,15 +31,20 @@ const getPropertiesList = (array) => {
   return propertiesList;
 };
 
-const plainFormatter = (array) => {
-  const propertiesList = getPropertiesList(array);
-  const filteredList = propertiesList
+const getFilteredPropertiesList = (propertiesList) => {
+  const result = propertiesList
     .map(([property, value, symbol], index, arr) => {
       if (arr[index + 1] && property === arr[index + 1][0]) return [property, [value, arr[index + 1][1]], 'updated'];
       if (arr[index - 1] && property === arr[index - 1][0]) return [property, value, ' '];
       return [property, value, symbol];
     })
     .filter(([, , symbol]) => symbol !== ' ');
+  return result;
+};
+
+const plainFormatter = (array) => {
+  const propertiesList = getPropertiesList(array);
+  const filteredList = getFilteredPropertiesList(propertiesList);
   return filteredList.reduce((acc, [property, value, symbol]) => [...acc, getPlainLine(property, value, symbol)], []).join('\n');
 };
 
