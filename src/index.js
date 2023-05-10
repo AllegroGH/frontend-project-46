@@ -46,7 +46,8 @@ const gendiff = (filepath1, filepath2, format = 'stylish') => {
   const [data1, data2] = parseFiles(fullPath1, fullPath2);
   if (!data1 || !data2) return 'wrong data';
   const diffStructure = makeDiff(data1, data2);
-  return formatter(diffStructure, format);
+  const result = formatter(diffStructure, format);
+  return result || 'wrong format';
 };
 
 export default gendiff;

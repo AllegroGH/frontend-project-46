@@ -15,10 +15,8 @@ const getPlainLine = (property, value, symbol) => {
       return `${intro} added with value: ${getPlainValue(value)}`;
     case '-':
       return `${intro} removed`;
-    case 'updated':
-      return `${intro} updated. From ${getPlainValue(value[0])} to ${getPlainValue(value[1])}`;
     default:
-      return '';
+      return `${intro} updated. From ${getPlainValue(value[0])} to ${getPlainValue(value[1])}`;
   }
 };
 
