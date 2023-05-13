@@ -38,8 +38,9 @@ const getStylishVal = (value, depth) => {
 };
 
 const stylishFormatter = (array) => {
-  const iter = (curArray) => {
-    const lines = curArray.reduce((acc, [depth, status, key, value]) => {
+  // prettier-ignore
+  const iter = (curArray) => curArray
+    .reduce((acc, [depth, status, key, value]) => {
       const curPrefix = getPrefix(status);
       const curIndent = space.repeat(depth * spacesCount - 2);
       const curBracketIndent = space.repeat(depth * spacesCount);
@@ -57,9 +58,8 @@ const stylishFormatter = (array) => {
       }
       const rest = [getStylishLine(curIndent, curPrefix, key, openingBracket), iter(value), `${curBracketIndent}${closingBracket}`].join('\n');
       return [...acc, rest];
-    }, []);
-    return lines.join('\n');
-  };
+    }, [])
+    .join('\n');
   return [openingBracket, iter(array), closingBracket].join('\n');
 };
 
