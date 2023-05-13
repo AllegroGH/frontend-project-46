@@ -37,6 +37,15 @@ const getStylishVal = (value, depth) => {
   return [openingBracket, ...lines, `${bracketIndent}${closingBracket}`].join('\n');
 };
 
+const getNode = (indent, prefix, key, value, status, depth) => {
+  if (status !== changedEntry) {
+    return getStylishLine(indent, prefix, key, getStylishVal(value, depth));
+  }
+  const [firstPrefix, secondPrefix] = prefix;
+  const [firstVal, secondVal] = value;
+  return [getStylishLine(indent, firstPrefix, key, getStylishVal(firstVal, depth)), getStylishLine(indent, secondPrefix, key, getStylishVal(secondVal, depth))].join('\n');
+};
+
 const stylishFormatter = (array) => {
   // prettier-ignore
   const iter = (curArray) => curArray
@@ -44,17 +53,8 @@ const stylishFormatter = (array) => {
       const curPrefix = getPrefix(status);
       const curIndent = space.repeat(depth * spacesCount - 2);
       const curBracketIndent = space.repeat(depth * spacesCount);
-      if (!_.isArray(value)) {
-        return [...acc, getStylishLine(curIndent, curPrefix, key, getStylishVal(value, depth + 1))];
-      }
-      if (status === changedEntry) {
-        const [firstPrefix, secondPrefix] = curPrefix;
-        const [firstVal, secondVal] = value;
-        return [
-          ...acc,
-          getStylishLine(curIndent, firstPrefix, key, getStylishVal(firstVal, depth + 1)),
-          getStylishLine(curIndent, secondPrefix, key, getStylishVal(secondVal, depth + 1)),
-        ];
+      if (!_.isArray(value) || status === changedEntry) {
+        return [...acc, getNode(curIndent, curPrefix, key, value, status, depth + 1)];
       }
       const rest = [getStylishLine(curIndent, curPrefix, key, openingBracket), iter(value), `${curBracketIndent}${closingBracket}`].join('\n');
       return [...acc, rest];
