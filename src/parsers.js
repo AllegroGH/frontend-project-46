@@ -15,7 +15,7 @@ const getDataType = (filepath) => {
 const parse = (filepath, dataType) => {
   if (dataType === 'JSON') return JSON.parse(readFileSync(filepath, 'utf8'));
   if (dataType === 'YAML') return yaml.load(readFileSync(filepath, 'utf8'));
-  return dataType;
+  return undefined;
 };
 
 const parseFiles = (filepath1, filepath2) => {
