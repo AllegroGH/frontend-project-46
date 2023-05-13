@@ -52,7 +52,9 @@ const stylishFormatter = (array) => {
         const [firstVal, secondVal] = value;
         acc.push(getStylishLine(curIndent, firstPrefix, key, getStylishVal(firstVal, depth + 1)));
         acc.push(getStylishLine(curIndent, secondPrefix, key, getStylishVal(secondVal, depth + 1)));
-      } else acc.push([getStylishLine(curIndent, curPrefix, key, openingBracket), iter(value), `${curBracketIndent}${closingBracket}`].join('\n'));
+        return acc;
+      }
+      acc.push([getStylishLine(curIndent, curPrefix, key, openingBracket), iter(value), `${curBracketIndent}${closingBracket}`].join('\n'));
       return acc;
     }, []);
     return lines.join('\n');
