@@ -44,22 +44,21 @@ const stylishFormatter = (array) => {
       const curIndent = space.repeat(depth * spacesCount - 2);
       const curBracketIndent = space.repeat(depth * spacesCount);
       if (!_.isArray(value)) {
-        acc.push(getStylishLine(curIndent, curPrefix, key, getStylishVal(value, depth + 1)));
-        return acc;
+        return [...acc, getStylishLine(curIndent, curPrefix, key, getStylishVal(value, depth + 1))];
       }
       if (status === changedEntry) {
         const [firstPrefix, secondPrefix] = curPrefix;
         const [firstVal, secondVal] = value;
-        acc.push(getStylishLine(curIndent, firstPrefix, key, getStylishVal(firstVal, depth + 1)));
-        acc.push(getStylishLine(curIndent, secondPrefix, key, getStylishVal(secondVal, depth + 1)));
-        return acc;
+        return [
+          ...acc,
+          getStylishLine(curIndent, firstPrefix, key, getStylishVal(firstVal, depth + 1)),
+          getStylishLine(curIndent, secondPrefix, key, getStylishVal(secondVal, depth + 1)),
+        ];
       }
-      acc.push([getStylishLine(curIndent, curPrefix, key, openingBracket), iter(value), `${curBracketIndent}${closingBracket}`].join('\n'));
-      return acc;
+      return [...acc, [getStylishLine(curIndent, curPrefix, key, openingBracket), iter(value), `${curBracketIndent}${closingBracket}`].join('\n')];
     }, []);
     return lines.join('\n');
   };
-
   return [openingBracket, iter(array), closingBracket].join('\n');
 };
 
