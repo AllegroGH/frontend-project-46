@@ -1,36 +1,21 @@
 import _ from 'lodash';
+// prettier-ignore
+import {
+  removedEntry, addedEntry, changedEntry, bothDataEntry,
+} from '../build.js';
 
 const addParent = (data, parent) => data.map(([key, value, status]) => [[parent, key].join('.'), value, status]);
 
 const getPropertiesList = (array) => {
   const propertiesList = array.reduce((acc, [, status, key, value]) => {
-    if (!_.isArray(value)) return [...acc, [key, value, status]];
+    if (!_.isArray(value) || status === changedEntry) return [...acc, [key, value, status]];
     return [...acc, ...addParent(getPropertiesList(value), key)];
   }, []);
 
   return propertiesList;
 };
 
-// const getUpdated
-
-// prettier-ignore
-const getFilteredPropertiesList = (propertiesList) => {
-  const ignoredStatus = ' ';
-  const updatedStatus = 'updated';
-  return propertiesList
-    .map(([property, value, status], index, arr) => {
-      const nextProperty = arr[index + 1] ? arr[index + 1][0] : undefined;
-      const nextValue = nextProperty ? arr[index + 1][1] : undefined;
-      const prevProperty = arr[index - 1] ? arr[index - 1][0] : undefined;
-
-      if (property === nextProperty) return [property, [value, nextValue], updatedStatus];
-      if (property === prevProperty) return [property, value, ignoredStatus];
-      return [property, value, status];
-    })
-    .filter(([, , status]) => status !== ignoredStatus);
-};
-
-const getPlainValue = (value) => {
+const getFormattedValue = (value) => {
   if (typeof value === 'string') return `'${value}'`;
   if (_.isObject(value)) return '[complex value]';
   return value;
@@ -39,21 +24,23 @@ const getPlainValue = (value) => {
 const getPlainLine = (property, value, status) => {
   const intro = `Property '${property}' was`;
   switch (status) {
-    case '+':
-      return `${intro} added with value: ${getPlainValue(value)}`;
-    case '-':
+    case addedEntry:
+      return `${intro} added with value: ${getFormattedValue(value)}`;
+    case removedEntry:
       return `${intro} removed`;
-    default: {
+    case changedEntry: {
       const [fromValue, toValue] = value;
-      return `${intro} updated. From ${getPlainValue(fromValue)} to ${getPlainValue(toValue)}`;
+      return `${intro} updated. From ${getFormattedValue(fromValue)} to ${getFormattedValue(toValue)}`;
     }
+    default:
+      return undefined;
   }
 };
 
-const plainFormatter = (array) => {
-  const propertiesList = getPropertiesList(array);
-  const filteredList = getFilteredPropertiesList(propertiesList);
-  return filteredList.reduce((acc, [property, value, status]) => [...acc, getPlainLine(property, value, status)], []).join('\n');
-};
+// prettier-ignore
+const plainFormatter = (array) => getPropertiesList(array)
+  .filter(([, , status]) => status !== bothDataEntry)
+  .reduce((acc, [property, value, status]) => [...acc, getPlainLine(property, value, status)], [])
+  .join('\n');
 
 export default plainFormatter;

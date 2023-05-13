@@ -1,0 +1,55 @@
+{
+  "common": {
+    "status": "both",
+    "value": {
+      "follow": {
+        "status": "added",
+        "value": false
+      },
+      "setting1": {
+        "status": "both",
+        "value": "Value 1"
+      },
+      "setting2": {
+        "status": "removed",
+        "value": 200
+      },
+      "setting3": {
+        "status": "changed",
+        "value": [true, null]
+      },
+      "setting4": {
+        "status": "added",
+        "value": "blah blah"
+      },
+      "setting5": {
+        "status": "added",
+        "value": {
+            "key5": "value5"
+        }
+      },
+      "setting6": {
+        "status": "both",
+        "value": {
+          "doge": {
+            "status": "both",
+            "value": {
+              "wow": {
+                "status": "changed",
+                "value": ["", "so much"]
+              }
+            }
+          },
+          "key": {
+            "status": "both",
+            "value": "value"
+          },
+          "ops": {
+            "status": "added",
+            "value": "vops"
+          }
+        }
+      }
+    }
+  }
+}

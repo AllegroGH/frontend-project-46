@@ -22,6 +22,13 @@ const deepYamlPath2 = getFixturePath('deepFile2.yml');
 const deepExpectedString = readFile('expected_deep', 'utf8').trim();
 const deepExpectedStringPlain = readFile('expected_plain', 'utf8').trim();
 
+const jsonDiff = readFile('!!!test.json', 'utf8').trim();
+
+test('gendiff json-json', () => {
+  expect(genDiff(jsonPath1, jsonPath2)).toEqual(expectedString);
+  expect(genDiff(deepJsonPath1, deepJsonPath2, 'json')).toEqual(jsonDiff);
+});
+
 test('gendiff flat files', () => {
   expect(genDiff(jsonPath1, jsonPath2)).toEqual(expectedString);
   expect(genDiff(yamlPath1, yamlPath2)).toEqual(expectedString);
