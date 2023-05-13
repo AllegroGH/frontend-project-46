@@ -1,6 +1,34 @@
 import _ from 'lodash';
 
-const addParent = (data, parent) => data.map(([key, value, symbol]) => [[parent, key].join('.'), value, symbol]);
+const addParent = (data, parent) => data.map(([key, value, status]) => [[parent, key].join('.'), value, status]);
+
+const getPropertiesList = (array) => {
+  const propertiesList = array.reduce((acc, [, status, key, value]) => {
+    if (!_.isArray(value)) return [...acc, [key, value, status]];
+    return [...acc, ...addParent(getPropertiesList(value), key)];
+  }, []);
+
+  return propertiesList;
+};
+
+// const getUpdated
+
+// prettier-ignore
+const getFilteredPropertiesList = (propertiesList) => {
+  const ignoredStatus = ' ';
+  const updatedStatus = 'updated';
+  return propertiesList
+    .map(([property, value, status], index, arr) => {
+      const nextProperty = arr[index + 1] ? arr[index + 1][0] : undefined;
+      const nextValue = nextProperty ? arr[index + 1][1] : undefined;
+      const prevProperty = arr[index - 1] ? arr[index - 1][0] : undefined;
+
+      if (property === nextProperty) return [property, [value, nextValue], updatedStatus];
+      if (property === prevProperty) return [property, value, ignoredStatus];
+      return [property, value, status];
+    })
+    .filter(([, , status]) => status !== ignoredStatus);
+};
 
 const getPlainValue = (value) => {
   if (typeof value === 'string') return `'${value}'`;
@@ -8,40 +36,24 @@ const getPlainValue = (value) => {
   return value;
 };
 
-const getPlainLine = (property, value, symbol) => {
+const getPlainLine = (property, value, status) => {
   const intro = `Property '${property}' was`;
-  switch (symbol) {
+  switch (status) {
     case '+':
       return `${intro} added with value: ${getPlainValue(value)}`;
     case '-':
       return `${intro} removed`;
-    default:
-      return `${intro} updated. From ${getPlainValue(value[0])} to ${getPlainValue(value[1])}`;
+    default: {
+      const [fromValue, toValue] = value;
+      return `${intro} updated. From ${getPlainValue(fromValue)} to ${getPlainValue(toValue)}`;
+    }
   }
 };
-
-const getPropertiesList = (array) => {
-  const propertiesList = array.reduce((acc, [, symbol, key, value]) => {
-    if (!_.isArray(value)) return [...acc, [key, value, symbol]];
-    return [...acc, ...addParent(getPropertiesList(value), key)];
-  }, []);
-
-  return propertiesList;
-};
-
-// prettier-ignore
-const getFilteredPropertiesList = (propertiesList) => propertiesList
-  .map(([property, value, symbol], index, arr) => {
-    if (arr[index + 1] && property === arr[index + 1][0]) return [property, [value, arr[index + 1][1]], 'updated'];
-    if (arr[index - 1] && property === arr[index - 1][0]) return [property, value, ' '];
-    return [property, value, symbol];
-  })
-  .filter(([, , symbol]) => symbol !== ' ');
 
 const plainFormatter = (array) => {
   const propertiesList = getPropertiesList(array);
   const filteredList = getFilteredPropertiesList(propertiesList);
-  return filteredList.reduce((acc, [property, value, symbol]) => [...acc, getPlainLine(property, value, symbol)], []).join('\n');
+  return filteredList.reduce((acc, [property, value, status]) => [...acc, getPlainLine(property, value, status)], []).join('\n');
 };
 
 export default plainFormatter;
