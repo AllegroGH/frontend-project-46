@@ -32,26 +32,11 @@ const getChangedVal = ([fromValue, toValue], depth) => `[${getJsonVal(fromValue,
 const getJsonLeaf = (depth, key, value, status, trailing) => {
   const keyIndent = space.repeat(depth * spacesCount);
   const childsIndent = space.repeat((depth + 1) * spacesCount);
-  // prettier-ignore
-  const curValue = status === changedEntry
-    ? getChangedVal(value, depth + 1) : getJsonVal(value, depth + 1);
-  // prettier-ignore
   return [
     `${keyIndent}\\"${key}\\": ${openingBracket}`,
     `${childsIndent}\\"status\\": \\"${status}\\",`,
-    `${childsIndent}\\"value\\": ${curValue}`,
+    `${childsIndent}\\"value\\": ${value}`,
     `${keyIndent}${closingBracket}${trailing}`,
-  ].join(joinSubString);
-};
-
-const getJsonNode = (depth, key, status) => {
-  const keyIndent = space.repeat(depth * spacesCount);
-  const childsIndent = space.repeat((depth + 1) * spacesCount);
-  // prettier-ignore
-  return [
-    `${keyIndent}\\"${key}\\": ${openingBracket}`,
-    `${childsIndent}\\"status\\": \\"${status}\\",`,
-    `${childsIndent}\\"value\\": ${openingBracket}`,
   ].join(joinSubString);
 };
 
@@ -59,19 +44,16 @@ const jsonFormatter = (array) => {
   // prettier-ignore
   const iter = (curArray, depthIncrement = 0) => curArray
     .reduce((acc, [depth, status, key, value], curIndex, curElement) => {
-      const keyIndent = space.repeat((depth + depthIncrement) * spacesCount);
       const childsIndent = space.repeat((depth + 1 + depthIncrement) * spacesCount);
       const trailing = curIndex < (curElement.length - 1) ? trailingSymbol : '';
       if (!_.isArray(value) || status === changedEntry) {
-        return [...acc, getJsonLeaf(depth + depthIncrement, key, value, status, trailing)];
+        const curValue = status === changedEntry
+          ? getChangedVal(value, depth + depthIncrement + 1)
+          : getJsonVal(value, depth + depthIncrement + 1);
+        return [...acc, getJsonLeaf(depth + depthIncrement, key, curValue, status, trailing)];
       }
-      const rest = [
-        getJsonNode(depth + depthIncrement, key, status),
-        iter(value, depthIncrement + 1),
-        `${childsIndent}${closingBracket}`,
-        `${keyIndent}${closingBracket}${trailing}`,
-      ].join(joinSubString);
-      return [...acc, rest];
+      const node = [openingBracket, iter(value, depthIncrement + 1), `${childsIndent}${closingBracket}`].join(joinSubString);
+      return [...acc, getJsonLeaf(depth + depthIncrement, key, node, status, trailing)];
     }, [])
     .join(joinSubString);
 
