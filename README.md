@@ -17,14 +17,18 @@ make install
 
 ## Examples
 
-Comparision of two flat .jsons:
+Stylish comparision of two flat .jsons:
 [![asciicast](https://asciinema.org/a/0pBzrDwMyCWkOhUV4KHboxTYn.svg)](https://asciinema.org/a/0pBzrDwMyCWkOhUV4KHboxTYn)
 
-Comparision of two flat .jsons/.yml:
+Stylish comparision of two flat .jsons/.yml:
 [![asciicast](https://asciinema.org/a/69tcitdVbFgVYXeCY075oww7L.svg)](https://asciinema.org/a/69tcitdVbFgVYXeCY075oww7L)
 
-Comparision of two deep .jsons/.yml:
+Stylish comparision of two deep .jsons/.yml:
 [![asciicast](https://asciinema.org/a/WOLeU2YfLKHmMIaflNOKnQmfI.svg)](https://asciinema.org/a/WOLeU2YfLKHmMIaflNOKnQmfI)
 
 Plain comparision of two deep .jsons/.yml:
 [![asciicast](https://asciinema.org/a/VnNuqfZEyaVJdlXOfO9YgQt3X.svg)](https://asciinema.org/a/VnNuqfZEyaVJdlXOfO9YgQt3X)
+
+JSON comparision of two deep .jsons/.yml:
+[![asciicast](https://asciinema.org/a/Dg2dwqq6geouCK63C0AWu44qL.svg)](https://asciinema.org/a/Dg2dwqq6geouCK63C0AWu44qL)
+

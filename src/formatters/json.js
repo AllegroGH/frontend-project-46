@@ -6,14 +6,14 @@ const spacesCount = 2;
 const openingBracket = '{';
 const closingBracket = '}';
 const trailingSymbol = ',';
-const joinSubString = '\n';
+const joinSubString = '\\n';
 
 const getFormattedValue = (value) => {
-  if (typeof value === 'string') return `"${value}"`;
+  if (typeof value === 'string') return `\\"${value}\\"`;
   return value;
 };
 
-const getJsonLine = (indent, key, value, trailing) => `${indent}"${key}": ${value}${trailing}`;
+const getJsonLine = (indent, key, value, trailing) => `${indent}\\"${key}\\": ${value}${trailing}`;
 
 const getJsonVal = (value, depth) => {
   if (!_.isObject(value)) return getFormattedValue(value);
@@ -37,9 +37,9 @@ const getJsonLeaf = (depth, key, value, status, trailing) => {
     ? getChangedVal(value, depth + 1) : getJsonVal(value, depth + 1);
   // prettier-ignore
   return [
-    `${keyIndent}"${key}": ${openingBracket}`,
-    `${childsIndent}"status": "${status}",`,
-    `${childsIndent}"value": ${curValue}`,
+    `${keyIndent}\\"${key}\\": ${openingBracket}`,
+    `${childsIndent}\\"status\\": \\"${status}\\",`,
+    `${childsIndent}\\"value\\": ${curValue}`,
     `${keyIndent}${closingBracket}${trailing}`,
   ].join(joinSubString);
 };
@@ -49,9 +49,9 @@ const getJsonNode = (depth, key, status) => {
   const childsIndent = space.repeat((depth + 1) * spacesCount);
   // prettier-ignore
   return [
-    `${keyIndent}"${key}": ${openingBracket}`,
-    `${childsIndent}"status": "${status}",`,
-    `${childsIndent}"value": ${openingBracket}`,
+    `${keyIndent}\\"${key}\\": ${openingBracket}`,
+    `${childsIndent}\\"status\\": \\"${status}\\",`,
+    `${childsIndent}\\"value\\": ${openingBracket}`,
   ].join(joinSubString);
 };
 
@@ -75,7 +75,7 @@ const jsonFormatter = (array) => {
     }, [])
     .join(joinSubString);
 
-  return [openingBracket, iter(array), closingBracket].join(joinSubString);
+  return [openingBracket, iter(array), closingBracket, ''].join(joinSubString);
 };
 
 export default jsonFormatter;
