@@ -31,6 +31,11 @@ const getJsonVal = (value, depth) => {
 
 const getChangedVal = ([fromValue, toValue], depth) => `[${getJsonVal(fromValue, depth)}, ${getJsonVal(toValue, depth)}]`;
 
+const getLeafValue = (depth, value, status) => {
+  if (status === changedEntry) return getChangedVal(value, depth);
+  return getJsonVal(value, depth);
+};
+
 const getJsonLeaf = (depth, key, value, status, trailing) => {
   const keyIndent = space.repeat(depth * spacesCount);
   const childsIndent = space.repeat((depth + 1) * spacesCount);
@@ -49,9 +54,7 @@ const jsonFormatter = (array) => {
       const childsIndent = space.repeat((depth + 1 + depthIncrement) * spacesCount);
       const trailing = getTrailing(curIndex, curElement);
       if (!_.isArray(value) || status === changedEntry) {
-        const curValue = status === changedEntry
-          ? getChangedVal(value, depth + depthIncrement + 1)
-          : getJsonVal(value, depth + depthIncrement + 1);
+        const curValue = getLeafValue(depth + depthIncrement + 1, value, status);
         return [...acc, getJsonLeaf(depth + depthIncrement, key, curValue, status, trailing)];
       }
       const node = [openingBracket, iter(value, depthIncrement + 1), `${childsIndent}${closingBracket}`].join(joinSubString);
