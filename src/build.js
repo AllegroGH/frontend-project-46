@@ -21,9 +21,13 @@ const buildDiff = (data1, data2) => {
     const sortedKeys = getSortedKeysUnion(iterData1, iterData2);
     const diffArray = sortedKeys.reduce((acc, key) => {
       if (_.isObject(iterData1[key]) && _.isObject(iterData2[key])) {
-        acc.push([depth, bothDataEntry, key, [...iter(iterData1[key], iterData2[key], depth + 1)]]);
-      } else acc.push(getDiffElement(iterData1, iterData2, key, depth));
-      return acc;
+        // prettier-ignore
+        return [
+          ...acc,
+          [depth, bothDataEntry, key, [...iter(iterData1[key], iterData2[key], depth + 1)]],
+        ];
+      }
+      return [...acc, getDiffElement(iterData1, iterData2, key, depth)];
     }, []);
     return diffArray;
   };
