@@ -13,6 +13,8 @@ const getFormattedValue = (value) => {
   return value;
 };
 
+const getTrailing = (index, array) => (index < array.length - 1 ? trailingSymbol : '');
+
 const getJsonLine = (indent, key, value, trailing) => `${indent}\\"${key}\\": ${value}${trailing}`;
 
 const getJsonVal = (value, depth) => {
@@ -20,7 +22,7 @@ const getJsonVal = (value, depth) => {
   const childIndent = space.repeat((depth + 1) * spacesCount);
   const bracketIndent = space.repeat(depth * spacesCount);
   const lines = Object.entries(value).map(([key, val], curIndex, curElement) => {
-    const trailing = curIndex < curElement.length - 1 ? trailingSymbol : '';
+    const trailing = getTrailing(curIndex, curElement);
     if (!_.isObject(val)) return getJsonLine(childIndent, key, getFormattedValue(val), trailing);
     return getJsonLine(childIndent, key, getJsonVal(val, depth + 1), trailing);
   });
@@ -45,7 +47,7 @@ const jsonFormatter = (array) => {
   const iter = (curArray, depthIncrement = 0) => curArray
     .reduce((acc, [depth, status, key, value], curIndex, curElement) => {
       const childsIndent = space.repeat((depth + 1 + depthIncrement) * spacesCount);
-      const trailing = curIndex < (curElement.length - 1) ? trailingSymbol : '';
+      const trailing = getTrailing(curIndex, curElement);
       if (!_.isArray(value) || status === changedEntry) {
         const curValue = status === changedEntry
           ? getChangedVal(value, depth + depthIncrement + 1)
