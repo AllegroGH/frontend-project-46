@@ -6,7 +6,6 @@ const formatter = (array, formatName) => {
   if (formatName === 'stylish') return stylishFormatter(array);
   if (formatName === 'plain') return plainFormatter(array);
   if (formatName === 'json') return jsonFormatter(array);
-  // return array[0];
   return undefined;
 };
 

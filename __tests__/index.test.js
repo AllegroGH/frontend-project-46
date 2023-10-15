@@ -22,7 +22,6 @@ const deepYamlPath2 = getFixturePath('deepFile2.yml');
 const deepExpected = readFile('expected_deep', 'utf8').trim();
 const deepExpectedPlain = readFile('expected_plain', 'utf8').trim();
 const deepExpectedJson = readFile('expected_json', 'utf8').trim();
-// const deepExpectedStringJson = readFile('expected_json_string', 'utf8').trim();
 
 test('gendiff flat files', () => {
   expect(genDiff(jsonPath1, jsonPath2)).toEqual(expectedString);
@@ -40,7 +39,7 @@ test('gendiff deep files --format plain/json', () => {
 });
 
 test('FS and format errors', () => {
-  expect(genDiff('1.json', '2.yaml')).toEqual('invalid paths or filenames');
-  expect(genDiff(getFixturePath('1'), getFixturePath('2'))).toEqual('wrong data');
-  expect(genDiff(deepYamlPath1, deepJsonPath2, '123')).toEqual('wrong format');
+  expect(genDiff('1.json', '2.yaml')).toEqual('Error: file(s) does not exist');
+  expect(genDiff(getFixturePath('1'), getFixturePath('2'))).toEqual('Error: wrong data');
+  expect(genDiff(deepYamlPath1, deepJsonPath2, '123')).toEqual('Error: wrong format');
 });
